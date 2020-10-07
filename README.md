@@ -1,6 +1,6 @@
 # PSY Admin
 
-![Generating production build](https://github.com/AERODARIUS/psy-admin/workflows/Generating%20production%20build/badge.svg?branch=master)
+![production build](https://github.com/AERODARIUS/psy-admin/workflows/Generating%20production%20build/badge.svg?branch=master)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
