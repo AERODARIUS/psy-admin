@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import {
   CalendarOutlined,
@@ -6,10 +6,12 @@ import {
   TeamOutlined,
   LoginOutlined,
 } from '@ant-design/icons';
+import { initFirebase, useIsLogedIn, LogInButton, logOut } from './server';
 import 'antd/dist/antd.css';
 import './App.css';
 
 const { Content, Sider } = Layout;
+
 
 function App() {
   const [ collapsed, setCollapsed ] = useState(true);
@@ -18,6 +20,18 @@ function App() {
     setCollapsed(collapsed);
   };
 
+  useEffect(() => {
+    initFirebase();
+  });
+
+  if (!useIsLogedIn()) {
+    return (
+      <div className="login-screen">
+        <h1>Psy Admin</h1>
+        <LogInButton />
+      </div>
+    );
+  }
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -35,7 +49,7 @@ function App() {
           <Menu.Item key="3" icon={<GlobalOutlined />}>
             Mapa
           </Menu.Item>
-          <Menu.Item key="4" icon={<LoginOutlined />}>
+          <Menu.Item key="4" icon={<LoginOutlined />} onClick={logOut}>
             Logout
           </Menu.Item>
         </Menu>
@@ -46,7 +60,7 @@ function App() {
             <Breadcrumb.Item>Expedientes</Breadcrumb.Item>
           </Breadcrumb>
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-            Bill is a cat.
+            Content Here
           </div>
         </Content>
       </Layout>
