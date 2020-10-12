@@ -21,8 +21,8 @@ const initFirebase = () => {
   }
 };
 
-const useIsLogedIn = () => {
-  const [isLogedIn, setIsLogedIn] = useState(false);
+const useIsLoggedIn = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     if (!isFirebaseInit()) {
@@ -30,7 +30,7 @@ const useIsLogedIn = () => {
     }
 
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      setIsLogedIn(user);
+      setIsLoggedIn(user);
     });
 
     return () => {
@@ -38,7 +38,7 @@ const useIsLogedIn = () => {
     };
   });
 
-  return isLogedIn;
+  return isLoggedIn;
 };
 
 const LogInButton = () => {
@@ -100,7 +100,7 @@ const logOut = () => {
   firebase.auth().signOut().then(() => {
     // Sign-out successful.
   }).catch((error) => {
-    console.err(error);
+    console.error(error);
     // An error happened.
   });
 };
@@ -110,7 +110,7 @@ const ProfilePhoto = () => {
 
 export {
   initFirebase,
-  useIsLogedIn,
+  useIsLoggedIn,
   LogInButton,
   logOut,
   ProfilePhoto,

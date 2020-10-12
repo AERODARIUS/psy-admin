@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Avatar, Layout, Menu, Breadcrumb } from 'antd';
 import {
   CalendarOutlined,
   GlobalOutlined,
@@ -7,7 +7,7 @@ import {
   LoginOutlined,
 } from '@ant-design/icons';
 import {
-  initFirebase, useIsLogedIn, LogInButton, logOut,
+  initFirebase, useIsLoggedIn, LogInButton, logOut,
 } from './server';
 import 'antd/dist/antd.css';
 import './App.scss';
@@ -25,7 +25,9 @@ function App() {
     initFirebase();
   });
 
-  if (!useIsLogedIn()) {
+  const userData = useIsLoggedIn();
+
+  if (!userData) {
     return (
       <div className="login-screen">
         <h1>Psy Admin</h1>
@@ -34,11 +36,13 @@ function App() {
     );
   }
 
+  const { displayName, photoURL } = userData;
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
         <div className="logo">
-          {collapsed ? 'PA' : 'Psy Admin'}
+          {collapsed ? <Avatar size="large" src={photoURL} /> : displayName}
         </div>
         <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
           <Menu.Item key="1" icon={<TeamOutlined />}>
