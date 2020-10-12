@@ -27,9 +27,13 @@ jobs:
     - name: Intalling dependencies
       run: npm ci
     - name: Generate production build
-      run: npm run build --if-present
-    - run: npm run lint
-    - run: npm test
+      run: npm run build
+    - name: Analyzing Javascript code
+      run: npm run lint
+    - name: Analyzing stylesheets files
+      run: npm run stylelint
+    - name: Running jest tests
+      run: npm test
     - name: Archive Production Artifact
       uses: actions/upload-artifact@master
       with:

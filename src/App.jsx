@@ -10,7 +10,7 @@ import {
   initFirebase, useIsLogedIn, LogInButton, logOut,
 } from './server';
 import 'antd/dist/antd.css';
-import './App.css';
+import './App.scss';
 
 const { Content, Sider } = Layout;
 
