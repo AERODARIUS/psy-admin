@@ -6,17 +6,18 @@ import {
   TeamOutlined,
   LoginOutlined,
 } from '@ant-design/icons';
-import { initFirebase, useIsLogedIn, LogInButton, logOut } from './server';
+import {
+  initFirebase, useIsLogedIn, LogInButton, logOut,
+} from './server';
 import 'antd/dist/antd.css';
 import './App.css';
 
 const { Content, Sider } = Layout;
 
-
 function App() {
-  const [ collapsed, setCollapsed ] = useState(true);
+  const [collapsed, setCollapsed] = useState(true);
 
-  const onCollapse = collapsed => {
+  const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };
 
