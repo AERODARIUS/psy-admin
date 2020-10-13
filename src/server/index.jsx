@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Spin } from 'antd';
 import * as firebase from 'firebase/app';
 import * as firebaseui from 'firebaseui';
 
@@ -48,7 +49,8 @@ const LogInButton = () => {
         .auth()
         .setPersistence(process.env.NODE_ENV === 'test' ? firebase.auth.Auth.Persistence.NONE : firebase.auth.Auth.Persistence.LOCAL)
         .then(() => {
-          const ui = new firebaseui.auth.AuthUI(firebase.auth());
+          const existingUi = firebaseui.auth.AuthUI.getInstance();
+          const ui = existingUi || new firebaseui.auth.AuthUI(firebase.auth());
 
           ui.start('#firebaseui-auth-container', {
             signInOptions: [
@@ -92,7 +94,9 @@ const LogInButton = () => {
   });
 
   return (
-    <div id="firebaseui-auth-container" />
+    <div id="firebaseui-auth-container">
+      {!isFirebaseInit() && <Spin size="large" />}
+    </div>
   );
 };
 
@@ -105,13 +109,10 @@ const logOut = () => {
   });
 };
 
-const ProfilePhoto = () => {
-};
-
 export {
+  isFirebaseInit,
   initFirebase,
   useIsLoggedIn,
   LogInButton,
   logOut,
-  ProfilePhoto,
 };
