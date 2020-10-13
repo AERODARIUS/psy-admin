@@ -31,6 +31,12 @@ const LoggedInContent = ({
 }) => {
   const location = useLocation().pathname.split('/').filter((pathPart) => (pathPart && pathPart !== ''));
   const history = useHistory();
+  const routesMap = {
+    [Routes.EXPEDIENTES]: '1',
+    [Routes.CONSULTAS]: '2',
+    [Routes.MAPA]: '3',
+  };
+  const selectedKey = location.length > 0 ? [routesMap[`/${location[0]}`]] : [];
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -38,7 +44,7 @@ const LoggedInContent = ({
         <div className="logo">
           {collapsed ? <Avatar size="large" src={photoURL} /> : displayName}
         </div>
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+        <Menu theme="dark" mode="inline" selectedKeys={selectedKey}>
           <Menu.Item key="1" icon={<TeamOutlined />}>
             <Link to={Routes.EXPEDIENTES}>Expedientes</Link>
           </Menu.Item>

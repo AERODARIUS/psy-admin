@@ -23,7 +23,7 @@ const initFirebase = () => {
 };
 
 const useIsLoggedIn = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
 
   useEffect(() => {
     if (!isFirebaseInit()) {
