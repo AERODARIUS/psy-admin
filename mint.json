@@ -1,0 +1,18 @@
+{
+  "name": "psy-admin",
+  "application": {
+    "head": "assets/head.html",
+    "title": "psy-admin"
+  },
+  "source-directories": [
+    "source"
+  ],
+  "test-directories": [
+    "tests"
+  ],
+  "external": {
+    "stylesheets": [
+      "public/main.css"
+    ]
+  }
+}
