@@ -56,6 +56,7 @@ function App() {
               />
             )}
         </Route>
+        <Route path="*" component={Routes.NOT_FOUND} />
       </Switch>
     </Router>
   );

@@ -4,6 +4,7 @@ import Home from './home';
 import Expedientes from './expedientes';
 import Consultas from './consultas';
 import Mapa from './mapa';
+import NotFound from './notFound';
 
 export default {
   EXPEDIENTES: '/expedientes',
@@ -21,4 +22,5 @@ export {
   Expedientes,
   Consultas,
   Mapa,
+  NotFound,
 };
