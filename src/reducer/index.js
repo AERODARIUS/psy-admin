@@ -1,3 +1,5 @@
+import { AUTH_CHANGE, FIREBASE_INIT } from './actions';
+
 const initialState = {
   firebaseInit: false,
   authUser: {},
@@ -5,15 +7,15 @@ const initialState = {
 
 export default function appReducer(state = initialState, action) {
   switch (action.type) {
-    case 'firebase-init':
+    case AUTH_CHANGE:
+      return {
+        ...state,
+        authUser: { ...action.authUser },
+      };
+    case FIREBASE_INIT:
       return {
         ...state,
         firebaseInit: true,
-      };
-    case 'auth-change':
-      return {
-        ...state,
-        authUser: action.authUser,
       };
     default:
       return state;

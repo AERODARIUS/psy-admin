@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import {
   Switch,
   Route,
   Link,
   useLocation,
   useHistory,
-} from "react-router-dom";
+  Redirect,
+} from 'react-router-dom';
 import {
   Avatar, Layout, Menu, Breadcrumb,
 } from 'antd';
@@ -23,6 +25,7 @@ import Routes, {
 import {
   logOut,
 } from '../server';
+import { getAuthUser } from '../reducer/selectors';
 
 const { Content, Sider } = Layout;
 
@@ -31,12 +34,19 @@ const LoggedInContent = ({
 }) => {
   const location = useLocation().pathname.split('/').filter((pathPart) => (pathPart && pathPart !== ''));
   const history = useHistory();
+  const currentUser = useSelector(getAuthUser);
   const routesMap = {
     [Routes.EXPEDIENTES]: '1',
     [Routes.CONSULTAS]: '2',
     [Routes.MAPA]: '3',
   };
   const selectedKey = location.length > 0 ? [routesMap[`/${location[0]}`]] : [];
+
+  useEffect(() => {
+    if (!currentUser.uid) {
+      history.push(Routes.LOGIN);
+    }
+  });
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -64,7 +74,8 @@ const LoggedInContent = ({
           <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item
               style={{ cursor: 'pointer' }}
-              onClick={() => { history.push(Routes.HOME); }}>
+              onClick={() => { history.push(Routes.HOME); }}
+            >
               <HomeOutlined />
             </Breadcrumb.Item>
             {location.map((pathPart) => (
@@ -87,6 +98,9 @@ const LoggedInContent = ({
               <Route exact path={Routes.HOME}>
                 <Home />
               </Route>
+              <Route path="*">
+                <Redirect to={Routes.NOT_FOUND} />
+              </Route>
             </Switch>
           </div>
         </Content>
@@ -96,10 +110,15 @@ const LoggedInContent = ({
 };
 
 LoggedInContent.propTypes = {
-  displayName: PropTypes.string.isRequired,
-  photoURL: PropTypes.string.isRequired,
+  displayName: PropTypes.string,
+  photoURL: PropTypes.string,
   collapsed: PropTypes.bool.isRequired,
   onCollapse: PropTypes.func.isRequired,
+};
+
+LoggedInContent.defaultProps = {
+  displayName: '',
+  photoURL: '',
 };
 
 export default LoggedInContent;

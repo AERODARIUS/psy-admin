@@ -10,7 +10,7 @@ body {
   font-size: 1.5rem;
 }
 
-.login-screen {
+.general-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -19,14 +19,14 @@ body {
   width: auto;
   margin: 0;
   padding: 0;
-}
 
-.login-screen h1 {
-  color: #eee;
-  text-shadow: 2px 2px 0 #00000080;
-  font-size: 3rem;
-}
+  h1 {
+    color: #eee;
+    text-shadow: 2px 2px 0 #00000080;
+    font-size: 3rem;
+  }
 
-.login-screen ul {
-  list-style: none;
+  ul {
+    list-style: none;
+  }
 }

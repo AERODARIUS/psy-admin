@@ -1,47 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Spin } from 'antd';
 import * as firebase from 'firebase/app';
 import * as firebaseui from 'firebaseui';
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyDksYcvsfuxT81d5c2_s4byphfUWOZ2P_Q',
-  authDomain: 'psy-admin.firebaseapp.com',
-  databaseURL: 'https://psy-admin.firebaseio.com',
-  projectId: 'psy-admin',
-  storageBucket: 'psy-admin.appspot.com',
-  messagingSenderId: '242225514848',
-  appId: '1:242225514848:web:8c629073783e3b5e6df605',
-  measurementId: 'G-9GC3XZLJ1P',
-};
-
-const initFirebase = () => {
-  firebase.initializeApp(firebaseConfig);
-};
-
-const useIsLoggedIn = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(null);
-  const isFirebaseInit = useSelector((state) => state.firebaseInit);
-
-  useEffect(() => {
-    if (!isFirebaseInit) {
-      return undefined;
-    }
-
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      setIsLoggedIn(user);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  });
-
-  return isLoggedIn;
-};
+import { AUTH_CHANGE } from '../reducer/actions';
+import { getAuthUser, getIsFirebaseInit } from '../reducer/selectors';
 
 const LogInButton = () => {
-  const isFirebaseInit = useSelector((state) => state.firebaseInit);
+  const isFirebaseInit = useSelector(getIsFirebaseInit);
 
   useEffect(() => {
     if (isFirebaseInit) {
@@ -53,43 +19,48 @@ const LogInButton = () => {
           const ui = existingUi || new firebaseui.auth.AuthUI(firebase.auth());
 
           try {
-            ui.start('#firebaseui-auth-container', {
-              signInOptions: [
-                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-              ],
-              signInSuccessUrl: process.env.REACT_APP_CALLBACK_URL,
-              callbacks: {
-                signInSuccessWithAuthResult(authResult, redirectUrl) {
-                  console.log(authResult);
-                  console.log(redirectUrl);
-                  // var user = authResult.user;
-                  // var credential = authResult.credential;
-                  // var isNewUser = authResult.additionalUserInfo.isNewUser;
-                  // var providerId = authResult.additionalUserInfo.providerId;
-                  // var operationType = authResult.operationType;
-                  // Do something with the returned AuthResult.
-                  // Return type determines whether we continue the redirect automatically
-                  // or whether we leave that to developer to handle.
-                  return true;
+            const authButtonId = 'firebaseui-auth-container';
+            const authButton = document.getElementById(authButtonId);
+
+            if (authButton) {
+              ui.start(`#${authButtonId}`, {
+                signInOptions: [
+                  firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                ],
+                signInSuccessUrl: process.env.REACT_APP_CALLBACK_URL,
+                callbacks: {
+                  signInSuccessWithAuthResult(authResult, redirectUrl) {
+                    console.log(authResult);
+                    console.log(redirectUrl);
+                    // var user = authResult.user;
+                    // var credential = authResult.credential;
+                    // var isNewUser = authResult.additionalUserInfo.isNewUser;
+                    // var providerId = authResult.additionalUserInfo.providerId;
+                    // var operationType = authResult.operationType;
+                    // Do something with the returned AuthResult.
+                    // Return type determines whether we continue the redirect automatically
+                    // or whether we leave that to developer to handle.
+                    return true;
+                  },
+                  // signInFailure callback must be provided to handle merge conflicts which
+                  // occur when an existing credential is linked to an anonymous user.
+                  signInFailure(error) {
+                  // For merge conflicts, the error.code will be
+                  // 'firebaseui/anonymous-upgrade-merge-conflict'.
+                    if (error.code !== 'firebaseui/anonymous-upgrade-merge-conflict') {
+                      return Promise.resolve();
+                    }
+                    // The credential the user tried to sign in with.
+                    const cred = error.credential;
+                    // Copy data from anonymous user to permanent user and delete anonymous
+                    // user.
+                    // ...
+                    // Finish sign-in after data is copied.
+                    return firebase.auth().signInWithCredential(cred);
+                  },
                 },
-                // signInFailure callback must be provided to handle merge conflicts which
-                // occur when an existing credential is linked to an anonymous user.
-                signInFailure(error) {
-                // For merge conflicts, the error.code will be
-                // 'firebaseui/anonymous-upgrade-merge-conflict'.
-                  if (error.code !== 'firebaseui/anonymous-upgrade-merge-conflict') {
-                    return Promise.resolve();
-                  }
-                  // The credential the user tried to sign in with.
-                  const cred = error.credential;
-                  // Copy data from anonymous user to permanent user and delete anonymous
-                  // user.
-                  // ...
-                  // Finish sign-in after data is copied.
-                  return firebase.auth().signInWithCredential(cred);
-                },
-              },
-            });
+              });
+            }
           } catch (e) {
             console.log(e);
           }
@@ -115,9 +86,32 @@ const logOut = () => {
   });
 };
 
+const useCurrentUser = () => {
+  const dispatch = useDispatch();
+  const isFirebaseInit = useSelector(getIsFirebaseInit);
+  const savedUser = useSelector(getAuthUser);
+
+  useEffect(() => {
+    if (isFirebaseInit) {
+      const unsubscribe = firebase.auth().onAuthStateChanged((authUser) => {
+        if ((authUser || {}).uid !== savedUser.uid) {
+          dispatch({ type: AUTH_CHANGE, authUser });
+        }
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+
+    return undefined;
+  });
+
+  return savedUser;
+};
+
 export {
-  initFirebase,
-  useIsLoggedIn,
+  useCurrentUser,
   LogInButton,
   logOut,
 };

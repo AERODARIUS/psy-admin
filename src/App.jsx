@@ -1,65 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import * as firebase from 'firebase/app';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect,
 } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import './App.scss';
-import { initFirebase, useIsLoggedIn } from './server';
+import config from './config';
+import { FIREBASE_INIT } from './reducer/actions';
+import { getIsFirebaseInit } from './reducer/selectors';
 import Routes, {
   Login,
-  LoginSuccess,
+  NotFound,
 } from './routes';
 import LoggedInContent from './routes/loggedInContent';
+import { useCurrentUser } from './server';
 
-function App() {
-  const isFirebaseInit = useSelector((state) => state.firebaseInit);
+export default () => {
+  const isFirebaseInit = useSelector(getIsFirebaseInit);
+  const userData = useCurrentUser();
   const dispatch = useDispatch();
   const [collapsed, setCollapsed] = useState(true);
 
   useEffect(() => {
     if (!isFirebaseInit) {
-      dispatch({ type: 'firebase-init' });
-      initFirebase();
+      dispatch({ type: FIREBASE_INIT });
+      firebase.initializeApp(config.firebaseConfig);
     }
-
-    return undefined;
   });
-
-  const userData = useIsLoggedIn();
 
   const { displayName, photoURL } = userData || {};
 
   return (
     <Router>
       <Switch>
-        <Route path={Routes.LOGIN}>
-          {userData ? <Redirect to={Routes.HOME} /> : <Login />}
+        <Route exact path={Routes.LOGIN}>
+          <Login />
         </Route>
-        <Route path={Routes.LOGIN_SUCCESS}>
-          <LoginSuccess />
-        </Route>
-        {!userData && <Redirect to={Routes.LOGIN} />}
+        <Route exact path={Routes.NOT_FOUND} component={NotFound} />
         <Route path={Routes.HOME}>
-          {userData
-            && (
-              <LoggedInContent
-                displayName={displayName}
-                photoURL={photoURL}
-                collapsed={collapsed}
-                onCollapse={(isCollapsed) => {
-                  setCollapsed(isCollapsed);
-                }}
-              />
-            )}
+          <LoggedInContent
+            displayName={displayName}
+            photoURL={photoURL}
+            collapsed={collapsed}
+            onCollapse={(isCollapsed) => {
+              setCollapsed(isCollapsed);
+            }}
+          />
         </Route>
-        <Route path="*" component={Routes.NOT_FOUND} />
       </Switch>
     </Router>
   );
 }
-
-export default App;
