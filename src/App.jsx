@@ -11,11 +11,9 @@ import './App.scss';
 import config from './config';
 import { FIREBASE_INIT } from './reducer/actions';
 import { getIsFirebaseInit } from './reducer/selectors';
-import Routes, {
-  Login,
-  NotFound,
-} from './routes';
-import LoggedInContent from './routes/loggedInContent';
+import { NotFound, Login } from './pages';
+import * as Routes from './routes';
+import LoggedInContent from './pages/loggedInContent';
 import { useCurrentUser } from './server';
 
 export default () => {

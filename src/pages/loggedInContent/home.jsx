@@ -4,7 +4,7 @@ import { Collapse, Typography } from 'antd';
 const { Title } = Typography;
 const { Panel } = Collapse;
 
-const Home = () => (
+export default () => (
   <div>
     <Title level={3}>Guía rápida</Title>
     <Collapse accordion>
@@ -28,5 +28,3 @@ const Home = () => (
     </Collapse>
   </div>
 );
-
-export default Home;

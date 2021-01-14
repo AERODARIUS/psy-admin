@@ -19,13 +19,15 @@ import {
   LogoutOutlined,
   HomeOutlined,
 } from '@ant-design/icons';
-import Routes, {
-  Home, Expedientes, Consultas, Mapa,
-} from '../routes';
+import { LOGIN, HOME, EXPEDIENTES, CONSULTAS, MAPA, NOT_FOUND } from '../../routes';
+import Home from './home';
+import Consultas from './consultas';
+import Expedientes from './expedientes';
+import Mapa from './mapa';
 import {
   logOut,
-} from '../server';
-import { getAuthUser } from '../reducer/selectors';
+} from '../../server';
+import { getAuthUser } from '../../reducer/selectors';
 
 const { Content, Sider } = Layout;
 
@@ -36,15 +38,15 @@ const LoggedInContent = ({
   const history = useHistory();
   const currentUser = useSelector(getAuthUser);
   const routesMap = {
-    [Routes.EXPEDIENTES]: '1',
-    [Routes.CONSULTAS]: '2',
-    [Routes.MAPA]: '3',
+    [EXPEDIENTES]: '1',
+    [CONSULTAS]: '2',
+    [MAPA]: '3',
   };
   const selectedKey = location.length > 0 ? [routesMap[`/${location[0]}`]] : [];
 
   useEffect(() => {
     if (!currentUser.uid) {
-      history.push(Routes.LOGIN);
+      history.push(LOGIN);
     }
   });
 
@@ -56,13 +58,13 @@ const LoggedInContent = ({
         </div>
         <Menu theme="dark" mode="inline" selectedKeys={selectedKey}>
           <Menu.Item key="1" icon={<TeamOutlined />}>
-            <Link to={Routes.EXPEDIENTES}>Expedientes</Link>
+            <Link to={EXPEDIENTES}>Expedientes</Link>
           </Menu.Item>
           <Menu.Item key="2" icon={<CalendarOutlined />}>
-            <Link to={Routes.CONSULTAS}>Consultas</Link>
+            <Link to={CONSULTAS}>Consultas</Link>
           </Menu.Item>
           <Menu.Item key="3" icon={<GlobalOutlined />}>
-            <Link to={Routes.MAPA}>Mapa</Link>
+            <Link to={MAPA}>Mapa</Link>
           </Menu.Item>
           <Menu.Item key="4" icon={<LogoutOutlined />} onClick={logOut}>
             Logout
@@ -74,7 +76,7 @@ const LoggedInContent = ({
           <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item
               style={{ cursor: 'pointer' }}
-              onClick={() => { history.push(Routes.HOME); }}
+              onClick={() => { history.push(HOME); }}
             >
               <HomeOutlined />
             </Breadcrumb.Item>
@@ -84,22 +86,22 @@ const LoggedInContent = ({
               </Breadcrumb.Item>
             ))}
           </Breadcrumb>
-          <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}> 
+          <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
             <Switch>
-              <Route path={Routes.EXPEDIENTES}>
+              <Route path={EXPEDIENTES}>
                 <Expedientes />
               </Route>
-              <Route path={Routes.CONSULTAS}>
+              <Route path={CONSULTAS}>
                 <Consultas />
               </Route>
-              <Route path={Routes.MAPA}>
+              <Route path={MAPA}>
                 <Mapa />
               </Route>
-              <Route exact path={Routes.HOME}>
+              <Route exact path={HOME}>
                 <Home />
               </Route>
               <Route path="*">
-                <Redirect to={Routes.NOT_FOUND} />
+                <Redirect to={NOT_FOUND} />
               </Route>
             </Switch>
           </div>

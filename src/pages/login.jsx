@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Typography } from 'antd';
 import { LogInButton, useCurrentUser } from '../server';
-import routes from '../routes';
+import { HOME } from '../routes';
 
 const { Title } = Typography;
 
@@ -12,7 +12,7 @@ export default () => {
 
   useEffect(() => {
     if (user.uid) {
-      history.push(routes.HOME);
+      history.push(HOME);
     }
   });
 
