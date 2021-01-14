@@ -19,7 +19,9 @@ import {
   LogoutOutlined,
   HomeOutlined,
 } from '@ant-design/icons';
-import { LOGIN, HOME, EXPEDIENTES, CONSULTAS, MAPA, NOT_FOUND } from '../../routes';
+import {
+  LOGIN, HOME, EXPEDIENTES, CONSULTAS, MAPA, NOT_FOUND, RESTRICTED_PAGES,
+} from '../../routes';
 import Home from './home';
 import Consultas from './consultas';
 import Expedientes from './expedientes';
@@ -27,7 +29,7 @@ import Mapa from './mapa';
 import {
   logOut,
 } from '../../server';
-import { getAuthUser } from '../../reducer/selectors';
+import { getAuthUser, getPermissions } from '../../reducer/selectors';
 
 const { Content, Sider } = Layout;
 
@@ -37,18 +39,27 @@ const LoggedInContent = ({
   const location = useLocation().pathname.split('/').filter((pathPart) => (pathPart && pathPart !== ''));
   const history = useHistory();
   const currentUser = useSelector(getAuthUser);
-  const routesMap = {
-    [EXPEDIENTES]: '1',
-    [CONSULTAS]: '2',
-    [MAPA]: '3',
-  };
-  const selectedKey = location.length > 0 ? [routesMap[`/${location[0]}`]] : [];
+  const permissions = useSelector(getPermissions);
+  const availablePages = RESTRICTED_PAGES.filter((page) => permissions[page]);
+  const selectedKey = location.length > 0 ? [`/${location[0]}`] : [];
 
   useEffect(() => {
     if (!currentUser.uid) {
       history.push(LOGIN);
     }
   });
+
+  const iconsMap = {
+    [EXPEDIENTES]: <TeamOutlined />,
+    [CONSULTAS]: <CalendarOutlined />,
+    [MAPA]: <GlobalOutlined />,
+  };
+
+  const pagesMap = {
+    [EXPEDIENTES]: Expedientes,
+    [CONSULTAS]: Consultas,
+    [MAPA]: Mapa,
+  };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -57,15 +68,13 @@ const LoggedInContent = ({
           {collapsed ? <Avatar size="large" src={photoURL} /> : displayName}
         </div>
         <Menu theme="dark" mode="inline" selectedKeys={selectedKey}>
-          <Menu.Item key="1" icon={<TeamOutlined />}>
-            <Link to={EXPEDIENTES}>Expedientes</Link>
-          </Menu.Item>
-          <Menu.Item key="2" icon={<CalendarOutlined />}>
-            <Link to={CONSULTAS}>Consultas</Link>
-          </Menu.Item>
-          <Menu.Item key="3" icon={<GlobalOutlined />}>
-            <Link to={MAPA}>Mapa</Link>
-          </Menu.Item>
+          {availablePages.map((page) => (
+            <Menu.Item key={page} icon={iconsMap[page]} style={{ textTransform: 'capitalize' }}>
+              <Link to={page}>
+                {page.substring(1)}
+              </Link>
+            </Menu.Item>
+          ))}
           <Menu.Item key="4" icon={<LogoutOutlined />} onClick={logOut}>
             Logout
           </Menu.Item>
@@ -88,17 +97,11 @@ const LoggedInContent = ({
           </Breadcrumb>
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
             <Switch>
-              <Route path={EXPEDIENTES}>
-                <Expedientes />
-              </Route>
-              <Route path={CONSULTAS}>
-                <Consultas />
-              </Route>
-              <Route path={MAPA}>
-                <Mapa />
-              </Route>
+              {availablePages.map((page) => (
+                <Route path={page} key={page} component={pagesMap[page]} />
+              ))}
               <Route exact path={HOME}>
-                <Home />
+                <Home availablePages={availablePages} />
               </Route>
               <Route path="*">
                 <Redirect to={NOT_FOUND} />

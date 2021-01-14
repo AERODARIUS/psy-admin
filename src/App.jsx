@@ -10,7 +10,7 @@ import {
 import 'antd/dist/antd.css';
 import './App.scss';
 import config from './config';
-import { FIREBASE_INIT } from './reducer/actions';
+import { FIREBASE_INIT, SET_PERMISSIONS } from './reducer/actions';
 import { getIsFirebaseInit } from './reducer/selectors';
 import { NotFound, Login } from './pages';
 import * as Routes from './routes';
@@ -36,7 +36,7 @@ export default () => {
         const profilePath = `/profiles/${profile}`;
 
         queryData({ database, path: profilePath }, (permissions) => {
-          dispatch({ type: FIREBASE_INIT, permissions });
+          dispatch({ type: SET_PERMISSIONS, permissions });
         });
       });
     }
