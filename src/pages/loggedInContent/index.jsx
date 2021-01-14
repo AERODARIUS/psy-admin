@@ -13,19 +13,14 @@ import {
   Avatar, Layout, Menu, Breadcrumb,
 } from 'antd';
 import {
-  CalendarOutlined,
-  GlobalOutlined,
-  TeamOutlined,
   LogoutOutlined,
   HomeOutlined,
 } from '@ant-design/icons';
+import pagesProps from './pagesProps';
 import {
-  LOGIN, HOME, EXPEDIENTES, CONSULTAS, MAPA, NOT_FOUND, RESTRICTED_PAGES,
+  LOGIN, HOME, NOT_FOUND,
 } from '../../routes';
 import Home from './home';
-import Consultas from './consultas';
-import Expedientes from './expedientes';
-import Mapa from './mapa';
 import {
   logOut,
 } from '../../server';
@@ -40,7 +35,8 @@ const LoggedInContent = ({
   const history = useHistory();
   const currentUser = useSelector(getAuthUser);
   const permissions = useSelector(getPermissions);
-  const availablePages = RESTRICTED_PAGES.filter((page) => permissions[page]);
+  const { pages, propsByPage } = pagesProps;
+  const availablePages = pages.filter((page) => permissions[page]);
   const selectedKey = location.length > 0 ? [`/${location[0]}`] : [];
 
   useEffect(() => {
@@ -48,18 +44,6 @@ const LoggedInContent = ({
       history.push(LOGIN);
     }
   });
-
-  const iconsMap = {
-    [EXPEDIENTES]: <TeamOutlined />,
-    [CONSULTAS]: <CalendarOutlined />,
-    [MAPA]: <GlobalOutlined />,
-  };
-
-  const pagesMap = {
-    [EXPEDIENTES]: Expedientes,
-    [CONSULTAS]: Consultas,
-    [MAPA]: Mapa,
-  };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -69,7 +53,11 @@ const LoggedInContent = ({
         </div>
         <Menu theme="dark" mode="inline" selectedKeys={selectedKey}>
           {availablePages.map((page) => (
-            <Menu.Item key={page} icon={iconsMap[page]} style={{ textTransform: 'capitalize' }}>
+            <Menu.Item
+              key={page}
+              icon={propsByPage[page].icon}
+              style={{ textTransform: 'capitalize' }}
+            >
               <Link to={page}>
                 {page.substring(1)}
               </Link>
@@ -98,7 +86,7 @@ const LoggedInContent = ({
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
             <Switch>
               {availablePages.map((page) => (
-                <Route path={page} key={page} component={pagesMap[page]} />
+                <Route path={page} key={page} component={propsByPage[page].component} />
               ))}
               <Route exact path={HOME}>
                 <Home availablePages={availablePages} />

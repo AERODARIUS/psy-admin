@@ -1,15 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Collapse, Typography } from 'antd';
-import { EXPEDIENTES, CONSULTAS, MAPA } from '../../routes';
+import pagesProps from './pagesProps';
 
 const { Title } = Typography;
 const { Panel } = Collapse;
-const contentMap = {
-  [EXPEDIENTES]: 'En esta sección se listan los expedientes de los pacientes.',
-  [CONSULTAS]: 'Calendario para visualizar la disponibilidad, las citas agendadadas, canceladas y realizadas.',
-  [MAPA]: 'Permite visualizar donde están los pacientes localizados geográficamente en relación a los centros de atención.',
-};
+const { propsByPage } = pagesProps;
 
 const Home = ({ availablePages }) => (
   <div>
@@ -24,7 +20,7 @@ const Home = ({ availablePages }) => (
           )}
           key={page}
         >
-          <p>{contentMap[page]}</p>
+          <p>{propsByPage[page].description}</p>
         </Panel>
       ))}
     </Collapse>
