@@ -1,4 +1,4 @@
-import { AUTH_CHANGE, FIREBASE_INIT } from './actions';
+import { AUTH_CHANGE, FIREBASE_INIT, SET_PERMISSIONS } from './actions';
 
 const initialState = {
   firebaseInit: false,
@@ -16,6 +16,13 @@ export default function appReducer(state = initialState, action) {
       return {
         ...state,
         firebaseInit: true,
+      };
+    case SET_PERMISSIONS:
+      return {
+        ...state,
+        authUser: {
+          permissions: { ...action.permissions },
+        },
       };
     default:
       return state;

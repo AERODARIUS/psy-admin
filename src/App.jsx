@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as firebase from 'firebase/app';
+import 'firebase/database';
 import {
   BrowserRouter as Router,
   Switch,
@@ -14,7 +15,7 @@ import { getIsFirebaseInit } from './reducer/selectors';
 import { NotFound, Login } from './pages';
 import * as Routes from './routes';
 import LoggedInContent from './pages/loggedInContent';
-import { useCurrentUser } from './server';
+import { useCurrentUser, queryData } from './server';
 
 export default () => {
   const isFirebaseInit = useSelector(getIsFirebaseInit);
@@ -26,6 +27,18 @@ export default () => {
     if (!isFirebaseInit) {
       dispatch({ type: FIREBASE_INIT });
       firebase.initializeApp(config.firebaseConfig);
+    } else if (userData.uid) {
+      // const userId = firebase.auth().currentUser.uid;
+      const database = firebase.database();
+      const userPath = `/users/${userData.uid}`;
+
+      queryData({ database, path: userPath }, (profile) => {
+        const profilePath = `/profiles/${profile}`;
+
+        queryData({ database, path: profilePath }, (permissions) => {
+          dispatch({ type: FIREBASE_INIT, permissions });
+        });
+      });
     }
   });
 
