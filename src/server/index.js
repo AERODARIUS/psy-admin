@@ -3,11 +3,13 @@ import {
   LogInButton,
   logOut,
 } from './auth';
-import queryData from './database';
+import { usePermissions, usePaciente, usePacientes } from './database';
 
 export {
   useCurrentUser,
   LogInButton,
   logOut,
-  queryData,
+  usePermissions,
+  usePaciente,
+  usePacientes,
 };
