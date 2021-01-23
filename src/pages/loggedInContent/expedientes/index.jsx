@@ -10,6 +10,9 @@ import Details from './details';
 const Expedientes = () => (
   <Switch>
     <Route exact path={EXPEDIENTES} component={List} />
+    <Route exact path={`${EXPEDIENTES}/:nombre`}>
+      <List />
+    </Route>
     <Route exact path={`${EXPEDIENTES}/:nombre/:apellido`}>
       <Details />
     </Route>

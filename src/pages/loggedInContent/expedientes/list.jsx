@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import 'firebase/firestore';
 import { Button, Card } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { EXPEDIENTES } from '../../../routes';
-import { usePacientes } from '../../../server';
+import { usePacientes, usePacientesWithName } from '../../../server';
 
 const DropboxFolder = ({ link }) => {
   const [embed, setEmbed] = useState(null);
@@ -41,7 +41,8 @@ DropboxFolder.defaultProps = {
 
 export default () => {
   const history = useHistory();
-  const pacientes = usePacientes();
+  const { nombre: queryName } = useParams();
+  const pacientes = queryName ? usePacientesWithName(queryName) : usePacientes();
 
   return (
     <>

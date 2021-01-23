@@ -3,7 +3,12 @@ import {
   LogInButton,
   logOut,
 } from './auth';
-import { usePermissions, usePaciente, usePacientes } from './database';
+import {
+  usePermissions,
+  usePaciente,
+  usePacientes,
+  usePacientesWithName,
+} from './database';
 
 export {
   useCurrentUser,
@@ -12,4 +17,5 @@ export {
   usePermissions,
   usePaciente,
   usePacientes,
+  usePacientesWithName,
 };

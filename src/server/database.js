@@ -26,6 +26,32 @@ export const usePacientes = () => {
   return pacientes;
 };
 
+export const usePacientesWithName = (nombre) => {
+  const isFirebaseInit = useSelector(getIsFirebaseInit);
+  const [pacientes, setPacientes] = useState([]);
+
+  useEffect(() => {
+    if (isFirebaseInit) {
+      const db = firebase.firestore();
+
+      db.collection('pacientes')
+        .where('nombre', '==', nombre)
+        .get()
+        .then((querySnapshot) => {
+          const pacientesList = [];
+
+          querySnapshot.forEach((doc) => {
+            pacientesList.push(doc.data());
+          });
+
+          setPacientes(pacientesList);
+        });
+    }
+  });
+
+  return pacientes;
+};
+
 export const usePaciente = ({ nombre, apellido }) => {
   const isFirebaseInit = useSelector(getIsFirebaseInit);
   const [paciente, setPaciente] = useState(null);
