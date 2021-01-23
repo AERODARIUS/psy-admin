@@ -31,7 +31,8 @@ const { Content, Sider } = Layout;
 const LoggedInContent = ({
   displayName, photoURL, collapsed, onCollapse,
 }) => {
-  const location = useLocation().pathname.split('/').filter((pathPart) => (pathPart && pathPart !== ''));
+  const { pathname } = useLocation();
+  const location = pathname.split('/').filter((pathPart) => (pathPart && pathPart !== ''));
   const history = useHistory();
   const currentUser = useSelector(getAuthUser);
   const permissions = useSelector(getPermissions);
@@ -41,7 +42,7 @@ const LoggedInContent = ({
 
   useEffect(() => {
     if (!currentUser.uid) {
-      history.push(LOGIN);
+      history.push(`${LOGIN}?returnURL=${pathname}`);
     }
   });
 
@@ -85,7 +86,7 @@ const LoggedInContent = ({
           </Breadcrumb>
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
             <Switch>
-              {availablePages.map((page) => (
+              {pages.map((page) => (
                 <Route path={page} key={page} component={propsByPage[page].component} />
               ))}
               <Route exact path={HOME}>
