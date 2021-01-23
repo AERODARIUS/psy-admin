@@ -28,6 +28,27 @@ import { getAuthUser, getPermissions } from '../../reducer/selectors';
 
 const { Content, Sider } = Layout;
 
+const getPathNavigation = (location, history) => (
+  location.reduce(([pathBreadcrumb, path], pathPart) => {
+    const fullPath = `${path}${pathPart}/`;
+    return [
+      [
+        ...pathBreadcrumb,
+        (
+          <Breadcrumb.Item
+            key={pathPart}
+            style={{ cursor: 'pointer' }}
+            onClick={() => { history.push(fullPath); }}
+          >
+            {pathPart.toUpperCase()}
+          </Breadcrumb.Item>
+        ),
+      ],
+      fullPath,
+    ];
+  }, [[], '/'])[0]
+);
+
 const LoggedInContent = ({
   displayName, photoURL, collapsed, onCollapse,
 }) => {
@@ -78,11 +99,7 @@ const LoggedInContent = ({
             >
               <HomeOutlined />
             </Breadcrumb.Item>
-            {location.map((pathPart) => (
-              <Breadcrumb.Item key={pathPart}>
-                {pathPart.toUpperCase()}
-              </Breadcrumb.Item>
-            ))}
+            {getPathNavigation(location, history)}
           </Breadcrumb>
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
             <Switch>
