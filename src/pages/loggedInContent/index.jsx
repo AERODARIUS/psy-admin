@@ -24,6 +24,7 @@ import {
   LOGIN, HOME, NOT_FOUND,
 } from '../../routes';
 import Home from './home';
+import NotAuthorized from './notAuthorized';
 import {
   logOut,
 } from '../../server';
@@ -127,7 +128,11 @@ const LoggedInContent = ({
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
             <Switch>
               {pages.map((page) => (
-                <Route path={page} key={page} component={propsByPage[page].component} />
+                <Route
+                  path={page}
+                  key={page}
+                  component={permissions[page] ? propsByPage[page].component : NotAuthorized}
+                />
               ))}
               <Route exact path={HOME}>
                 <Home availablePages={availablePages} />

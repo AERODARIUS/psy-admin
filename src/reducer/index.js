@@ -25,7 +25,7 @@ export default function appReducer(state = initialState, action) {
     case SET_PERMISSIONS:
       return {
         ...state,
-        permissions: Object.entries(action.permissions)
+        permissions: Object.entries(action.permissions || {})
           .reduce((pagePermissions, [page, permission]) => (
             { ...pagePermissions, [`/${page}`]: permission }
           ), {}),
