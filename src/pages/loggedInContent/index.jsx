@@ -10,6 +10,9 @@ import {
   Redirect,
 } from 'react-router-dom';
 import {
+  isBrowser,
+} from 'react-device-detect';
+import {
   Avatar, Layout, Menu, Breadcrumb,
 } from 'antd';
 import {
@@ -69,27 +72,47 @@ const LoggedInContent = ({
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-        <div className="logo">
-          {collapsed ? <Avatar size="large" src={photoURL} /> : displayName}
-        </div>
-        <Menu theme="dark" mode="inline" selectedKeys={selectedKey}>
-          {availablePages.map((page) => (
-            <Menu.Item
-              key={page}
-              icon={propsByPage[page].icon}
-              style={{ textTransform: 'capitalize' }}
-            >
-              <Link to={page}>
-                {page.substring(1)}
-              </Link>
+      {isBrowser ? (
+        <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
+          <div className="logo">
+            {collapsed ? <Avatar size="large" src={photoURL} /> : displayName}
+          </div>
+          <Menu theme="dark" mode="inline" selectedKeys={selectedKey}>
+            {availablePages.map((page) => (
+              <Menu.Item
+                key={page}
+                icon={propsByPage[page].icon}
+                style={{ textTransform: 'capitalize' }}
+              >
+                <Link to={page}>
+                  {page.substring(1)}
+                </Link>
+              </Menu.Item>
+            ))}
+            <Menu.Item key="4" icon={<LogoutOutlined />} onClick={logOut}>
+              Logout
             </Menu.Item>
-          ))}
-          <Menu.Item key="4" icon={<LogoutOutlined />} onClick={logOut}>
-            Logout
-          </Menu.Item>
-        </Menu>
-      </Sider>
+          </Menu>
+        </Sider>
+      )
+        : (
+          <Menu theme="dark" mode="horizontal" selectedKeys={selectedKey}>
+            {availablePages.map((page) => (
+              <Menu.Item
+                key={page}
+                icon={propsByPage[page].icon}
+                style={{ textTransform: 'capitalize' }}
+              >
+                <Link to={page}>
+                  {page.substring(1)}
+                </Link>
+              </Menu.Item>
+            ))}
+            <Menu.Item key="4" icon={<LogoutOutlined />} onClick={logOut}>
+              Logout
+            </Menu.Item>
+          </Menu>
+        )}
       <Layout className="site-layout">
         <Content style={{ margin: '0 16px' }}>
           <Breadcrumb style={{ margin: '16px 0' }}>
