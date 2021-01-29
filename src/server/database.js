@@ -76,7 +76,7 @@ export const usePaciente = ({ nombre, apellido }) => {
     }
   });
 
-  return paciente;
+  return paciente || {};
 };
 
 const queryData = ({ database, path }, callback) => {

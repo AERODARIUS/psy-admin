@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import {
@@ -10,14 +10,15 @@ import {
   Redirect,
 } from 'react-router-dom';
 import {
-  isBrowser,
+  isBrowser, isMobile,
 } from 'react-device-detect';
 import {
-  Avatar, Layout, Menu, Breadcrumb,
+  Avatar, Button, Drawer, Layout, Menu, Breadcrumb, Space,
 } from 'antd';
 import {
   LogoutOutlined,
   HomeOutlined,
+  MenuOutlined,
 } from '@ant-design/icons';
 import pagesProps from './pagesProps';
 import {
@@ -29,8 +30,30 @@ import {
   logOut,
 } from '../../server';
 import { getAuthUser, getPermissions } from '../../reducer/selectors';
+import './index.scss';
 
 const { Content, Sider } = Layout;
+
+const MainMenu = ({
+  pages, selectedPages, propsByPage, theme, onOpotionClick,
+}) => (
+  <Menu theme={theme} mode="inline" selectedKeys={selectedPages}>
+    {pages.map((page) => (
+      <Menu.Item
+        key={page}
+        icon={propsByPage[page].icon}
+        style={{ textTransform: 'capitalize' }}
+      >
+        <Link to={page} onClick={onOpotionClick}>
+          {page.substring(1)}
+        </Link>
+      </Menu.Item>
+    ))}
+    <Menu.Item key="4" icon={<LogoutOutlined />} onClick={logOut}>
+      Logout
+    </Menu.Item>
+  </Menu>
+);
 
 const getPathNavigation = (location, history) => (
   location.reduce(([pathBreadcrumb, path], pathPart) => {
@@ -64,6 +87,7 @@ const LoggedInContent = ({
   const { pages, propsByPage } = pagesProps;
   const availablePages = pages.filter((page) => permissions[page]);
   const selectedKey = location.length > 0 ? [`/${location[0]}`] : [];
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (!currentUser.uid) {
@@ -73,47 +97,19 @@ const LoggedInContent = ({
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      {isBrowser ? (
+      {isBrowser && (
         <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
           <div className="logo">
             {collapsed ? <Avatar size="large" src={photoURL} /> : displayName}
           </div>
-          <Menu theme="dark" mode="inline" selectedKeys={selectedKey}>
-            {availablePages.map((page) => (
-              <Menu.Item
-                key={page}
-                icon={propsByPage[page].icon}
-                style={{ textTransform: 'capitalize' }}
-              >
-                <Link to={page}>
-                  {page.substring(1)}
-                </Link>
-              </Menu.Item>
-            ))}
-            <Menu.Item key="4" icon={<LogoutOutlined />} onClick={logOut}>
-              Logout
-            </Menu.Item>
-          </Menu>
+          <MainMenu
+            pages={availablePages}
+            selectedPages={selectedKey}
+            propsByPage={propsByPage}
+            theme="dark"
+          />
         </Sider>
-      )
-        : (
-          <Menu theme="dark" mode="horizontal" selectedKeys={selectedKey}>
-            {availablePages.map((page) => (
-              <Menu.Item
-                key={page}
-                icon={propsByPage[page].icon}
-                style={{ textTransform: 'capitalize' }}
-              >
-                <Link to={page}>
-                  {page.substring(1)}
-                </Link>
-              </Menu.Item>
-            ))}
-            <Menu.Item key="4" icon={<LogoutOutlined />} onClick={logOut}>
-              Logout
-            </Menu.Item>
-          </Menu>
-        )}
+      )}
       <Layout className="site-layout">
         <Content style={{ margin: '0 16px' }}>
           <Breadcrumb style={{ margin: '16px 0' }}>
@@ -144,6 +140,40 @@ const LoggedInContent = ({
           </div>
         </Content>
       </Layout>
+      {isMobile && (
+        <>
+          <Drawer
+            title={(
+              <Space>
+                <Avatar size="large" src={photoURL} />
+                <h1 style={{ margin: 0 }}>
+                  {displayName}
+                </h1>
+              </Space>
+                )}
+            placement="left"
+            closable={false}
+            onClose={() => { setVisible(false); }}
+            visible={visible}
+          >
+            <MainMenu
+              pages={availablePages}
+              selectedPages={selectedKey}
+              propsByPage={propsByPage}
+              onOpotionClick={() => { setVisible(false); }}
+              theme="light"
+            />
+          </Drawer>
+          <Button
+            type="primary"
+            size="large"
+            className="drawer-menu"
+            onClick={() => { setVisible(true); }}
+          >
+            <MenuOutlined />
+          </Button>
+        </>
+      )}
     </Layout>
   );
 };
