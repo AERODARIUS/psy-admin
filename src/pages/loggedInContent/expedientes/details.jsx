@@ -12,8 +12,8 @@ const DropboxFolder = ({ link }) => {
       zoom: 'best',
     },
     folder: {
-      view: 'grid',
-      headerSize: 'normal',
+      view: 'list',
+      headerSize: 'small',
     },
   };
 
