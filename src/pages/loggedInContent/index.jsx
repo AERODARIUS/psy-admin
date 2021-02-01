@@ -30,7 +30,6 @@ import {
   logOut,
 } from '../../server';
 import { getAuthUser, getPermissions } from '../../reducer/selectors';
-import './index.scss';
 
 const { Content, Sider } = Layout;
 
@@ -112,15 +111,50 @@ const LoggedInContent = ({
       )}
       <Layout className="site-layout">
         <Content style={{ margin: '0 16px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item
-              style={{ cursor: 'pointer' }}
-              onClick={() => { history.push(HOME); }}
-            >
-              <HomeOutlined />
-            </Breadcrumb.Item>
-            {getPathNavigation(location, history)}
-          </Breadcrumb>
+          <Space>
+            {isMobile && (
+            <>
+              <Drawer
+                title={(
+                  <Space>
+                    <Avatar size="large" src={photoURL} />
+                    <h1 style={{ margin: 0 }}>
+                      {displayName}
+                    </h1>
+                  </Space>
+                    )}
+                placement="left"
+                closable={false}
+                onClose={() => { setVisible(false); }}
+                visible={visible}
+              >
+                <MainMenu
+                  pages={availablePages}
+                  selectedPages={selectedKey}
+                  propsByPage={propsByPage}
+                  onOpotionClick={() => { setVisible(false); }}
+                  theme="light"
+                />
+              </Drawer>
+              <Button
+                type="primary"
+                size="large"
+                onClick={() => { setVisible(true); }}
+              >
+                <MenuOutlined />
+              </Button>
+            </>
+            )}
+            <Breadcrumb style={{ margin: '16px 0' }}>
+              <Breadcrumb.Item
+                style={{ cursor: 'pointer' }}
+                onClick={() => { history.push(HOME); }}
+              >
+                <HomeOutlined />
+              </Breadcrumb.Item>
+              {getPathNavigation(location, history)}
+            </Breadcrumb>
+          </Space>
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
             <Switch>
               {pages.map((page) => (
@@ -140,40 +174,6 @@ const LoggedInContent = ({
           </div>
         </Content>
       </Layout>
-      {isMobile && (
-        <>
-          <Drawer
-            title={(
-              <Space>
-                <Avatar size="large" src={photoURL} />
-                <h1 style={{ margin: 0 }}>
-                  {displayName}
-                </h1>
-              </Space>
-                )}
-            placement="left"
-            closable={false}
-            onClose={() => { setVisible(false); }}
-            visible={visible}
-          >
-            <MainMenu
-              pages={availablePages}
-              selectedPages={selectedKey}
-              propsByPage={propsByPage}
-              onOpotionClick={() => { setVisible(false); }}
-              theme="light"
-            />
-          </Drawer>
-          <Button
-            type="primary"
-            size="large"
-            className="drawer-menu"
-            onClick={() => { setVisible(true); }}
-          >
-            <MenuOutlined />
-          </Button>
-        </>
-      )}
     </Layout>
   );
 };
