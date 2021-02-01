@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import * as firebase from 'firebase/app';
+import 'firebase/firestore';
 import { getIsFirebaseInit } from '../reducer/selectors';
 
 export const usePacientes = () => {
