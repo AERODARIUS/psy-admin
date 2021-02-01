@@ -48,7 +48,7 @@ export default () => {
                     >
                       Ver más información
                     </Menu.Item>
-                    <Menu.Item>Actualizar información</Menu.Item>
+                    <Menu.Item>Editar información</Menu.Item>
                   </Menu>
                 )}
               />
