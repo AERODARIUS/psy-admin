@@ -1,11 +1,12 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import {
-  Button, Card, Space, Input, Tag, Divider, Descriptions, Menu, Dropdown,
+  Button, Card, Space, Input, Tag, Divider, Descriptions,
 } from 'antd';
 import { UserAddOutlined } from '@ant-design/icons';
 import { EXPEDIENTES } from '../../../routes';
 import { usePacientes, usePacientesWithName } from '../../../server';
+import PatientActions from '../../../components/patientActions';
 
 export default () => {
   const { Search } = Input;
@@ -26,33 +27,26 @@ export default () => {
             size="large"
             onSearch={onSearch}
           />
-          <Button type="primary" size="large">
+          <Button
+            type="primary"
+            size="large"
+            onClick={
+              () => {
+                history.push(`${EXPEDIENTES}/new`);
+              }
+            }
+          >
             <UserAddOutlined />
           </Button>
         </Space>
 
         {pacientes.map(({
-          nombre, apellido, nacimiento, tags, costo, domicilio,
+          nombre, apellido, nacimiento, tags, costo, domicilio, fechaIngreso,
         }) => (
           <Card
             title={`${nombre} ${apellido}`}
             key={`${nombre} ${apellido}`}
-            extra={(
-              <Dropdown.Button
-                overlay={(
-                  <Menu>
-                    <Menu.Item
-                      onClick={() => {
-                        history.push(`${EXPEDIENTES}/${nombre}/${apellido}`);
-                      }}
-                    >
-                      Ver más información
-                    </Menu.Item>
-                    <Menu.Item>Editar información</Menu.Item>
-                  </Menu>
-                )}
-              />
-            )}
+            extra={<PatientActions nombre={nombre} apellido={apellido} />}
             style={{ width: 300 }}
           >
             <Descriptions
@@ -65,6 +59,9 @@ export default () => {
               </Descriptions.Item>
               <Descriptions.Item label="Nacimiento">
                 {Intl.DateTimeFormat('es-UY', { dateStyle: 'full' }).format(nacimiento?.toDate())}
+              </Descriptions.Item>
+              <Descriptions.Item label="Fecha de ingreso">
+                {Intl.DateTimeFormat('es-UY', { dateStyle: 'full' }).format(fechaIngreso?.toDate())}
               </Descriptions.Item>
               <Descriptions.Item label="Domicilio">
                 {domicilio}

@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import './App.scss';
-import config from './config';
+import { firebaseConfig } from './config';
 import { FIREBASE_INIT, SET_PERMISSIONS } from './reducer/actions';
 import { getIsFirebaseInit } from './reducer/selectors';
 import { NotFound, Login } from './pages';
@@ -27,7 +27,7 @@ export default () => {
   useEffect(() => {
     if (!isFirebaseInit) {
       dispatch({ type: FIREBASE_INIT });
-      firebase.initializeApp(config.firebaseConfig);
+      firebase.initializeApp(firebaseConfig);
     } else if (uid) {
       usePermissions(uid, (permissions) => {
         dispatch({ type: SET_PERMISSIONS, permissions });
