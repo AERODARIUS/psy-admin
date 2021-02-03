@@ -97,3 +97,12 @@ export const usePermissions = (userId, callback) => {
     queryData({ database, path: profilePath }, callback);
   });
 };
+
+export const savePatient = (data, successCallback, errorCallback) => {
+  const { nombre, apellido } = data;
+  const db = firebase.firestore();
+
+  db.collection('pacientes').doc(`${nombre}-${apellido}`).set(data)
+    .then(successCallback)
+    .catch(errorCallback);
+};
