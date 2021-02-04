@@ -2,10 +2,11 @@ import {
   AUTH_CHANGE, FIREBASE_INIT, SET_PERMISSIONS, SET_FIRESTORE_DB,
 } from './actions';
 
+const cachePermissions = JSON.parse(localStorage.getItem('permissions'));
 const initialState = {
   firebaseInit: false,
   authUser: {},
-  permissions: {
+  permissions: cachePermissions || {
     '/consultas': false,
     '/expedientes': false,
     '/mapa': false,
