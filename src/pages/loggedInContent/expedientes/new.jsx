@@ -6,7 +6,7 @@ import {
 } from 'antd';
 import moment from 'moment';
 import { TAGS } from '../../../config';
-import { getIsFirebaseInit } from '../../../reducer/selectors';
+import { getFirestoreDB } from '../../../reducer/selectors';
 import { savePatient } from '../../../server/database';
 import { EXPEDIENTES } from '../../../routes';
 
@@ -14,15 +14,16 @@ export default () => {
   const { TextArea } = Input;
   const { Option } = Select;
   const history = useHistory();
-  const isFirebaseInit = useSelector(getIsFirebaseInit);
+  const db = useSelector(getFirestoreDB);
 
   const onFinish = (formData) => {
     const {
       nombre, apellido, nacimiento, fechaIngreso,
     } = formData;
 
-    if (isFirebaseInit) {
+    if (db) {
       savePatient({
+        db,
         ...formData,
         nombre: nombre?.toLowerCase(),
         apellido: apellido?.toLowerCase(),

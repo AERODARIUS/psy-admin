@@ -10,7 +10,7 @@ import {
 import 'antd/dist/antd.css';
 import './App.scss';
 import { firebaseConfig } from './config';
-import { FIREBASE_INIT, SET_PERMISSIONS } from './reducer/actions';
+import { FIREBASE_INIT, SET_PERMISSIONS, SET_FIRESTORE_DB } from './reducer/actions';
 import { getIsFirebaseInit } from './reducer/selectors';
 import { NotFound, Login } from './pages';
 import * as Routes from './routes';
@@ -28,6 +28,11 @@ export default () => {
     if (!isFirebaseInit) {
       dispatch({ type: FIREBASE_INIT });
       firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      if (process.env.NODE_ENV === 'production') {
+        db.enablePersistence();
+      }
+      dispatch({ type: SET_FIRESTORE_DB, db });
     } else if (uid) {
       usePermissions(uid, (permissions) => {
         dispatch({ type: SET_PERMISSIONS, permissions });

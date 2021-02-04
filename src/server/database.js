@@ -2,16 +2,14 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
-import { getIsFirebaseInit } from '../reducer/selectors';
+import { getFirestoreDB } from '../reducer/selectors';
 
 export const usePacientes = () => {
-  const isFirebaseInit = useSelector(getIsFirebaseInit);
+  const db = useSelector(getFirestoreDB);
   const [pacientes, setPacientes] = useState([]);
 
   useEffect(() => {
-    if (isFirebaseInit) {
-      const db = firebase.firestore();
-
+    if (db) {
       db.collection('pacientes').get().then((querySnapshot) => {
         const pacientesList = [];
 
@@ -22,19 +20,17 @@ export const usePacientes = () => {
         setPacientes(pacientesList);
       });
     }
-  });
+  }, [db]);
 
   return pacientes;
 };
 
 export const usePacientesWithName = (nombre) => {
-  const isFirebaseInit = useSelector(getIsFirebaseInit);
+  const db = useSelector(getFirestoreDB);
   const [pacientes, setPacientes] = useState([]);
 
   useEffect(() => {
-    if (isFirebaseInit) {
-      const db = firebase.firestore();
-
+    if (db) {
       db.collection('pacientes')
         .where('nombre', '==', nombre)
         .get()
@@ -54,13 +50,11 @@ export const usePacientesWithName = (nombre) => {
 };
 
 export const usePaciente = ({ nombre, apellido }) => {
-  const isFirebaseInit = useSelector(getIsFirebaseInit);
+  const db = useSelector(getFirestoreDB);
   const [paciente, setPaciente] = useState(null);
 
   useEffect(() => {
-    if (isFirebaseInit && !paciente) {
-      const db = firebase.firestore();
-
+    if (db && !paciente) {
       db.collection('pacientes')
         .where('apellido', '==', apellido)
         .where('nombre', '==', nombre)
@@ -98,9 +92,8 @@ export const usePermissions = (userId, callback) => {
   });
 };
 
-export const savePatient = (data, successCallback, errorCallback) => {
+export const savePatient = (db, data, successCallback, errorCallback) => {
   const { nombre, apellido } = data;
-  const db = firebase.firestore();
 
   db.collection('pacientes').doc(`${nombre}-${apellido}`).set(data)
     .then(successCallback)
