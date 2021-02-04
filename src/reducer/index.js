@@ -11,6 +11,10 @@ const initialState = {
 };
 
 export default function appReducer(state = initialState, action) {
+  const permissions = Object.entries(action.permissions || {})
+    .reduce((pagePermissions, [page, permission]) => (
+      { ...pagePermissions, [`/${page}`]: permission }
+    ), {});
   switch (action.type) {
     case AUTH_CHANGE:
       return {
@@ -23,12 +27,10 @@ export default function appReducer(state = initialState, action) {
         firebaseInit: true,
       };
     case SET_PERMISSIONS:
+      localStorage.setItem('permissions', JSON.stringify(permissions));
       return {
         ...state,
-        permissions: Object.entries(action.permissions || {})
-          .reduce((pagePermissions, [page, permission]) => (
-            { ...pagePermissions, [`/${page}`]: permission }
-          ), {}),
+        permissions,
       };
     default:
       return state;
