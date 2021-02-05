@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
+import { notification } from 'antd';
 import { getFirestoreDB } from '../reducer/selectors';
 
 export const usePacientes = () => {
@@ -95,7 +96,25 @@ export const usePermissions = (userId, callback) => {
 export const savePatient = (db, data, successCallback, errorCallback) => {
   const { nombre, apellido } = data;
 
-  db.collection('pacientes').doc(`${nombre}-${apellido}`).set(data)
-    .then(successCallback)
-    .catch(errorCallback);
+  db.collection('pacientes')
+    .where('apellido', '==', apellido)
+    .where('nombre', '==', nombre)
+    .get()
+    .then((querySnapshot) => {
+      let dbPatient = null;
+
+      querySnapshot.forEach((doc) => {
+        dbPatient = doc.data();
+      });
+
+      if (dbPatient) {
+        notification.error({
+          message: 'Ya existe un paciente con ese nombre y apellido',
+        });
+      } else {
+        db.collection('pacientes').doc(`${nombre}-${apellido}`).set(data)
+          .then(successCallback)
+          .catch(errorCallback);
+      }
+    });
 };

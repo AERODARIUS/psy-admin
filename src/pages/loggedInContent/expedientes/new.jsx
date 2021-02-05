@@ -22,11 +22,10 @@ export default () => {
     } = formData;
 
     if (db) {
-      savePatient({
-        db,
+      savePatient(db, {
         ...formData,
-        nombre: nombre?.toLowerCase(),
-        apellido: apellido?.toLowerCase(),
+        nombre: nombre?.trim().toLowerCase(),
+        apellido: apellido?.trim().toLowerCase(),
         nacimiento: nacimiento?.toDate(),
         fechaIngreso: fechaIngreso?.toDate(),
       },
