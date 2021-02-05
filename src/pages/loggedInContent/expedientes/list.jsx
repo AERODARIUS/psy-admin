@@ -19,7 +19,7 @@ export default () => {
   return (
     <>
       <h2>EXPEDIENTES</h2>
-      <Space direction="vertical">
+      <Space direction="vertical" style={{ width: '100%'}}>
         <Space>
           <Search
             placeholder="Ingresa el nombre del paciente"
